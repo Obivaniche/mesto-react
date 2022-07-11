@@ -8,4 +8,4 @@
 
 <br><strong>Планирумые обновления:</strong> <p>Добавление виджета для просмотра пользователей отметивших карточку.</p>
 
-<br><strong>Ссылка GHPages:</strong> https://obivaniche.github.io/mesto/
+<br><strong>Ссылка GHPages:</strong>
