@@ -1,100 +1,131 @@
+import React from 'react';
 import '../pages/index.css';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
+import PopupWithForm from './PopupWithForm';
 
 function App() {
 
+  const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
+
+  function handleEditAvatarClick() {
+    setIsEditAvatarPopupOpen(true);
+  };
+
+  function handleEditProfileClick() {
+    setEditProfilePopupOpen(true);
+  };
+
+  function handleAddPlaceClick() {
+    setIsAddPlacePopupOpen(true);
+  };
+
   return (
-    <div class="page">
+    <div className="page">
       <Header />
       <Main
-        onEditProfile={props.handleEditProfileClick}
-        onAddPlace={props.handleAddPlaceClick}
-        onEditAvatar={props.handleEditAvatarClick}
+        onEditAvatar={handleEditAvatarClick}
+        onEditprofile={handleEditProfileClick}
+        onAddPlace={handleAddPlaceClick}
       />
       <Footer />
-      <div class="popup popup-edit">
-        <div class="popup__container">
-          <button class="button popup__close-button close-edit" type="button"></button>
-          <h2 class="popup__title">Редактировать профиль</h2>
-          <form class="form form-edit" name="profile" novalidate>
-            <fieldset class="form__set">
-              <label class="form__field">
-                <input id="name-input" class="form__input form__input_type_name" name="name" type="text"
-                  value="" minlength="2" maxlength="40" placeholder="Имя" required />
-                <span class="form__input-error name-input-error"></span>
+      <PopupWithForm
+        name='edit'
+        title='Редактировать профиль'
+        titleButton='Сохранить'
+        isOpen={isEditProfilePopupOpen}
+      >
+        <label className="form__field">
+          <input
+            id="name-input"
+            className="form__input form__input_type_name"
+            name="name"
+            type="text"
+            minLength={2}
+            maxLength={40}
+            placeholder="BИмя"
+            required
+          />
+          <span className="form__input-error name-input-error"></span>
+        </label>
+        <label className="form__field">
+          <input
+            id="about-input"
+            className="form__input form__input_type_about"
+            name="about"
+            type="text"
+            minLength={2}
+            maxLength={200}
+            placeholder="Вид деятельности"
+            required
+          />
+          <span className="form__input-error about-input-error"></span>
+        </label>
+      </PopupWithForm>
+
+      <div className="popup popup-add">
+        <div className="popup__container">
+          <button className="button popup__close-button" type="button"></button>
+          <h2 className="popup__title">Новое место</h2>
+          <form className="form form-add" name="place" noValidate>
+            <fieldset className="form__set">
+              <label className="form__field">
+                <input id="title-input" className="form__input form__input_type_title" name="title" type="text"
+                  value="" minLength="2" maxLength="30" placeholder="Название" required />
+                <span className="form__input-error title-input-error"></span>
               </label>
-              <label class="form__field">
-                <input id="about-input" class="form__input form__input_type_about" name="about" type="text" value=""
-                  minlength="2" maxlength="200" placeholder="Вид деятельности" required />
-                <span class="form__input-error about-input-error"></span>
-              </label>
-              <button class="button form__submit-button submit-edit" type="submit">Сохранить</button>
-            </fieldset>
-          </form>
-        </div>
-      </div>
-      <div class="popup popup-add">
-        <div class="popup__container">
-          <button class="button popup__close-button" type="button"></button>
-          <h2 class="popup__title">Новое место</h2>
-          <form class="form form-add" name="place" novalidate>
-            <fieldset class="form__set">
-              <label class="form__field">
-                <input id="title-input" class="form__input form__input_type_title" name="title" type="text"
-                  value="" minlength="2" maxlength="30" placeholder="Название" required />
-                <span class="form__input-error title-input-error"></span>
-              </label>
-              <label class="form__field">
-                <input id="link-input" class="form__input form__input_type_link" name="link" type="url"
+              <label className="form__field">
+                <input id="link-input" className="form__input form__input_type_link" name="link" type="url"
                   placeholder="Ссылка на картинку" required />
-                <span class="form__input-error link-input-error"></span>
+                <span className="form__input-error link-input-error"></span>
               </label>
-              <button class="button form__submit-button submit-add" type="submit">Создать</button>
+              <button className="button form__submit-button submit-add" type="submit">Создать</button>
             </fieldset>
           </form>
         </div>
       </div>
-      <div class="popup popup-img">
-        <div class="popup__img-container">
-          <button class="button popup__close-button" type="button"></button>
-          <img class="popup__img" src=" " alt="Фотография карточки" />
-          <p class="popup__discripton"></p>
+      <div className="popup popup-img">
+        <div className="popup__img-container">
+          <button className="button popup__close-button" type="button"></button>
+          <img className="popup__img" src=" " alt="Фотография карточки" />
+          <p className="popup__discripton"></p>
         </div>
       </div>
-      <div class="popup popup-avatar">
-        <div class="popup__container">
-          <button class="button popup__close-button" type="button"></button>
-          <h2 class="popup__title">Обновить аватар</h2>
-          <form class="form form-avatar" name="avatar" novalidate>
-            <fieldset class="form__set">
-              <label class="form__field">
-                <input id="avatar-input" class="form__input form__input_type_avatar" name="avatar" type="url"
+      <div className="popup popup-avatar">
+        <div className="popup__container">
+          <button className="button popup__close-button" type="button"></button>
+          <h2 className="popup__title">Обновить аватар</h2>
+          <form className="form form-avatar" name="avatar" noValidate>
+            <fieldset className="form__set">
+              <label className="form__field">
+                <input id="avatar-input" className="form__input form__input_type_avatar" name="avatar" type="url"
                   placeholder="Ссылка на картинку" required />
-                <span class="form__input-error avatar-input-error"></span>
+                <span className="form__input-error avatar-input-error"></span>
               </label>
-              <button class="button form__submit-button submit-avatar" type="submit">Сохранить</button>
+              <button className="button form__submit-button submit-avatar" type="submit">Сохранить</button>
             </fieldset>
           </form>
         </div>
       </div>
-      <div class="popup popup-confirm">
-        <div class="popup__container">
-          <button class="button popup__close-button" type="button"></button>
-          <h2 class="popup__title">Вы уверены?</h2>
-          <form class="form form-confirm">
-            <button class="button form__submit-button submit-confirm" type="submit">Да</button>
+      <div className="popup popup-confirm">
+        <div className="popup__container">
+          <button className="button popup__close-button" type="button"></button>
+          <h2 className="popup__title">Вы уверены?</h2>
+          <form className="form form-confirm">
+            <button className="button form__submit-button submit-confirm" type="submit">Да</button>
           </form>
         </div>
       </div>
       <template id="card-template">
-        <article class="card">
-          <img class="card__img" src=" " alt="Фотография карточки" />
-          <button class="button card__delete-button" type="button"></button>
-          <h2 class="card__title"></h2>
-          <button class="button card__like-button" type="button"></button>
-          <span class="card__like-counter">0</span>
+        <article className="card">
+          <img className="card__img" src=" " alt="Фотография карточки" />
+          <button className="button card__delete-button" type="button"></button>
+          <h2 className="card__title"></h2>
+          <button className="button card__like-button" type="button"></button>
+          <span className="card__like-counter">0</span>
         </article>
       </template>
     </div>
