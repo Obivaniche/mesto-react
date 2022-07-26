@@ -1,21 +1,43 @@
 import React from 'react';
 import avatar from '../images/avatar.png';
+import api from '../utils/Api';
+import Card from './Card';
 
-function Main({onEditProfile, onAddPlace, onEditAvatar}) {
+function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
+
+    const [userName, setUserName] = React.useState('Загрузка');
+    const [userDescription, setUserDescription] = React.useState('...');
+    const [userAvatar, setUserAvatar] = React.useState(avatar);
+    const [cards, setCards] = React.useState([]);
+
+
+    React.useEffect(() => {
+        Promise.all([api.getUserInfo(), api.getInitialCards()])
+            .then(([userData, userCard]) => {
+                setUserName(userData.name);
+                setUserDescription(userData.about);
+                setUserAvatar(userData.avatar);
+                setCards(userCard);
+            })
+            .catch((err) => console.log(`Ошибка: ${err}`))
+    }, []);
 
     return (
         <div className="content">
             <section className="profile">
                 <div className="profile__container">
-                    <img className="profile__avatar" src={avatar} alt="Ваш аватар" />
+                    <img className="profile__avatar" src={userAvatar} alt="Ваш аватар" />
                     <button className="profile__avatar-button" type="button" onClick={onEditAvatar}></button>
                 </div>
-                <h1 className="profile__name">Жак-Ив Кусто</h1>
-                <p className="profile__about">Исследователь океана</p>
+                <h1 className="profile__name">{userName}</h1>
+                <p className="profile__about">{userDescription}</p>
                 <button className="button profile__edit-button" type="button" onClick={onEditProfile} ></button>
                 <button className="button profile__add-button" type="button" onClick={onAddPlace}></button>
             </section>
             <section className="card-grid">
+                {cards.map((card) => (
+                    <Card card={card} key={card._id} onCardClick={onCardClick} />
+                ))}
             </section>
         </div>
     )
