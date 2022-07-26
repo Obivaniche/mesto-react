@@ -3,7 +3,7 @@ import React from 'react';
 function PopupWithForm({name, title, children, buttonTitle, isOpen}) {
 
     return (
-        <div className={`popup popup_${name} ${isOpen && "popup_opened"}`}>
+        <div className={`popup popup_${name} ${isOpen && 'popup_opened'}`}>
             <div className="popup__container">
                 <button className={`button popup__close-button close-${name}`} type="button"></button>
                 <h2 className="popup__title">{title}</h2>
