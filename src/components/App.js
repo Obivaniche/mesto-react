@@ -57,6 +57,7 @@ function App() {
     api.editUserInfo(data)
       .then((res) => {
         setCurrentUser(res);
+        console.log('Hello there')
         closeAllPopups();
       })
       .catch((err) => console.log(`Ошибка: ${err}`));
