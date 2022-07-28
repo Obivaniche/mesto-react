@@ -3,9 +3,11 @@ import '../pages/index.css';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
-import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
+import EditAvatarPopup from './EditAvatarPopup';
+import AddPlacePopup from './AddPlacePopup';
+import ConfirmDeletePopup from './ConfirmDeletePopup';
 import api from '../utils/Api';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
@@ -14,8 +16,12 @@ function App() {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [isConfirmPopupOpen, setIsConfirmPopupOpen] = React.useState(false);
+  
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
+  const [cardToDelete, setCardToDelete] = React.useState([]);
+  
   const [currentUser, setCurrentUser] = useState({
     name: 'Загрузка',
     about: '...',
@@ -29,6 +35,11 @@ function App() {
       })
       .catch((err) => console.log(`Ошибка: ${err}`));
   }, []);
+
+  function handleConfirmCardDelete(card) {
+    setCardToDelete(card);
+    setIsConfirmPopupOpen(true);
+  };
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
@@ -46,21 +57,54 @@ function App() {
     setSelectedCard(card);
   };
 
+  function handleUpdateUser(data) {
+    api.editUserInfo(data)
+      .then((res) => {
+        setCurrentUser(res);
+        closeAllPopups();
+      })
+      .catch((err) => console.log(`Ошибка: ${err}`));
+  };
+
+  function handleUpdateAvatar(data) {
+    api.editAvatar(data)
+      .then((res) => {
+        setCurrentUser(res);
+        closeAllPopups();
+      })
+      .catch((err) => console.log(`Ошибка: ${err}`));
+  };
+
+  function handleCardLike(card) {
+    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    api.toggleLikeStatus(card._id, !isLiked)
+      .then((newCard) => {
+        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+      });
+  };
+
+  function handleCardDelete(card) {
+    api.deleteCard(card._id)
+      .then(() => {
+        setCards((state) => state.filter((c) => c._id !== card._id));
+      })
+  };
+
+  function handleAddCards(data) {
+    api.addCard(data)
+      .then((newCard) => {
+        setCards([newCard, ...cards]);
+        closeAllPopups();
+      })
+      .catch((err) => console.log(`Ошибка: ${err}`));
+  };
+
   function closeAllPopups() {
     setEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setSelectedCard(null);
-  };
-
-  function handleUpdateUser() {
-    api.editUserInfo(data)
-      .then((res) => {
-        setCurrentUser(res);
-        console.log('Hello there')
-        closeAllPopups();
-      })
-      .catch((err) => console.log(`Ошибка: ${err}`));
+    setIsConfirmPopupOpen(false);
   };
 
   return (
@@ -72,6 +116,9 @@ function App() {
           onEditProfile={handleEditProfileClick}
           onAddPlace={handleAddPlaceClick}
           onCardClick={handleCardClick}
+          onCardLike={handleCardLike}
+          onCardDelete={handleConfirmCardDelete}
+          cards={cards}
         />
         <Footer />
         <EditProfilePopup 
@@ -79,71 +126,25 @@ function App() {
           onClose={closeAllPopups} 
           onUpdateUser={handleUpdateUser} />
 
-        <PopupWithForm
-          name='add'
-          title='Новое место'
-          buttonTitle='Создать'
-          isOpen={isAddPlacePopupOpen}
-          onClose={closeAllPopups}
-        >
-          <label className="form__field">
-            <input
-              id="title-input"
-              className="form__input form__input_type_title"
-              name="title"
-              type="text"
-              minLength={2}
-              maxLength={30}
-              placeholder="Название"
-              required
-            />
-            <span className="form__input-error title-input-error"></span>
-          </label>
-          <label className="form__field">
-            <input
-              id="link-input"
-              className="form__input form__input_type_link"
-              name="link"
-              type="url"
-              placeholder="Ссылка на картинку"
-              required
-            />
-            <span className="form__input-error link-input-error"></span>
-          </label>
-        </PopupWithForm>
+        <EditAvatarPopup 
+          isOpen={isEditAvatarPopupOpen} 
+          onClose={closeAllPopups} 
+          onUpdateUser={handleUpdateAvatar} />
 
-        <PopupWithForm
-          name='avatar'
-          title='Обновить аватар'
-          buttonTitle='Сохранить'
-          isOpen={isEditAvatarPopupOpen}
-          onClose={closeAllPopups}
-        >
-          <label className="form__field">
-            <input
-              id="avatar-input"
-              className="form__input form__input_type_avatar"
-              name="avatar"
-              type="url"
-              placeholder="Ссылка на картинку"
-              required />
-            <span className="form__input-error avatar-input-error"></span>
-          </label>
-        </PopupWithForm>
+        <AddPlacePopup 
+          isOpen={isAddPlacePopupOpen} 
+          onClose={closeAllPopups} 
+          onAddPlace={handleAddCards} />
 
         <ImagePopup
           card={selectedCard}
           onClose={closeAllPopups} />
 
-        <div className="popup popup-confirm">
-          <div className="popup__container">
-            <button className="button popup__close-button" type="button"></button>
-            <h2 className="popup__title">Вы уверены?</h2>
-            <form className="form form-confirm">
-              <button className="button form__submit-button submit-confirm" type="submit">Да</button>
-            </form>
-          </div>
-        </div>
+        <ConfirmDeletePopup
+          isOpen={isConfirmPopupOpen}
+          onClose={closeAllPopups}
+          onConfirm={handleCardDelete}
+          card={cardToDelete} />
       </CurrentUserContext.Provider>
     </div>
   );
