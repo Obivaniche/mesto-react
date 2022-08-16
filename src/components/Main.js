@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import api from '../utils/Api';
+import React, { useContext } from 'react';
 import Card from './Card';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
@@ -30,7 +29,8 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick, onCardLike
                 ))}
             </section>
         </div>
-    )
+    );
+    
 };
 
 export default Main;
